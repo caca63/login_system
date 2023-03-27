@@ -1,0 +1,107 @@
+import os
+import time
+
+open("username.txt", "a")
+open("password.txt", "a")
+username_data = open("username.txt").readlines()
+password_data = open("password.txt").readlines()
+
+
+def reload_data():
+    global username_data, password_data
+    username_data = open("username.txt").readlines()
+    password_data = open("password.txt").readlines()
+
+
+def login():
+    global username_data, password_data
+    print("\n------------------- Login -------------------\nEnter your username :")
+    username = input("-> ")
+    while True:
+        exists = False
+        username_position = 0
+        for u in username_data:
+            if u == username + "\n":
+                exists = True
+            if not exists:
+                username_position += 1
+        if exists:
+            break
+        else:
+            print("Error : This username doesn't exist, please create a new account or try again : ")
+            reload_data()
+            username = input("-> ")
+
+    print("\nEnter your password :")
+    while True:
+        correct_password = False
+        password = input("-> ")
+        idx = 0
+        for p in password_data:
+            if idx == username_position:
+                if password + "\n" == p:
+                    print(f"Logged into {username}'s account successfully.")
+                    correct_password = True
+                    break
+            idx += 1
+        if correct_password:
+            break
+        print("Error : Invalid password, please try again :")
+        reload_data()
+
+
+def register():
+    global username_data, password_data
+    print("\n------------------- Register -------------------\nCreate your username :")
+    username = input("-> ")
+    while True:
+        username = username.lower()
+        duplicate = False
+        for u in username_data:
+            if u == username + "\n":
+                duplicate = True
+        if duplicate:
+            print("Error : This username is already taken, please try another username : ")
+            reload_data()
+            username = input("-> ")
+        else:
+            print("Username created.")
+            break
+
+    print("\nCreate a password :")
+    while True:
+        password = input("-> ")
+        print("Confirm ? (Y/N)")
+        confirm_choice = input("-> ")
+        while confirm_choice.lower() != "y" and confirm_choice.lower() != "n":
+            print("Error : Invalid answer, please try again : ")
+            confirm_choice = input("-> ")
+            if confirm_choice == "Y":
+                break
+
+        if confirm_choice.lower() == "y":
+            break
+        else:
+            print("Create a password :")
+
+    with open("username.txt", "a") as a:
+        a.write(username.lower() + "\n")
+    with open("password.txt", "a") as a:
+        a.write(password + "\n")
+    print("Account created successfully.")
+
+
+while True:
+    os.system("cls")
+    print("1.Login\n2.Register")
+    choice = input("-> ")
+    choice = choice.lower()
+    while choice != "login" and choice != "login" and choice != "1" and choice != "2":
+        print("Error, Invalid answer, please try again :\n")
+        choice = input("-> ")
+
+    if choice == "login" or choice == "1":
+        login()
+    else:
+        register()
+    time.sleep(3)
